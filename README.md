@@ -9,3 +9,5 @@
 
 2. Czy potrzebna jest logika? (View)
     - <app_name>/views.py
+   
+3. Czy potrzebny jest routing?
