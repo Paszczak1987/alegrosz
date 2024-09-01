@@ -4,5 +4,4 @@ from django.shortcuts import render
 # Create your views here.
 
 def contact(request):
-    html = "<h1>Contact</h1>"
-    return HttpResponse(html)
+    return render(request, 'contact/contact.html')
