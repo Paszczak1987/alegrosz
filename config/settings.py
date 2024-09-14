@@ -15,25 +15,27 @@ from pathlib import Path
 import dj_database_url
 from dotenv import load_dotenv
 
-load_dotenv() # jak .env nie jest w katalogu projektu podaj ścieżkę
+load_dotenv()
+# Ładuje .env. Jeśli .env nie jest bezpośrednio w katalogu projektu trzeba podać ścieżkę
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+# zwrotka DASE_DIR : /home/lpaszko/projects/django_projects/alegrosz - link do katalogu Projektu
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = os.getenv('SECRET_KEY') # Załadowanie klucza z .env
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = int(os.getenv('DEBUG', default=0))
+DEBUG = int(os.getenv('DEBUG', default=0)) # Załadowanie DEBUG z .env 1 - dev, 0 - prod
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
-
+# Rejestracja apek wewnątrz projektu
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -43,15 +45,16 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     # 3rd party apps
+    'debug_toolbar',
     
     # local apps
-    
     'home.apps.HomeConfig',
     'contact.apps.ContactConfig',
-    
+    'product.apps.ProductConfig',
 ]
 
 MIDDLEWARE = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -59,6 +62,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+   
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -66,6 +70,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        # link do templatek html
         'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -94,6 +99,8 @@ DATABASES = {
 }
 
 DATABASE_URL = os.environ.get('DB_CONNECTION_STRING')
+# dlaczego os.environ.get(...) a nie os.getenv(...) ?????!!!!
+# Wygląda na to, że nie ma różnicy.
 
 db_from_env = dj_database_url.config(
     default=DATABASE_URL,
@@ -101,6 +108,7 @@ db_from_env = dj_database_url.config(
     ssl_require=False
 )
 
+# Nadpisanie domyślnej bazy danych
 DATABASES['default'].update(db_from_env)
 
 # Password validation
@@ -136,10 +144,41 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
-
 STATIC_URL = 'static/'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django.db.backends': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+        },
+    },
+}
+
+INTERNAL_IPS = [
+    # ...
+    '127.0.0.1',
+    # ...
+]
+
+

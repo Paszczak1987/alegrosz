@@ -14,11 +14,22 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from debug_toolbar.toolbar import debug_toolbar_urls
+from django.conf.urls.static import static, settings
 from django.contrib import admin
 from django.urls import path, include
+
+# Tutaj musimy podpiąć URL do URLsów naszych apek
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('home.urls')),
+    # apka home
     path('', include('contact.urls')),
-]
+    # apka contact
+    path('', include('product.urls')),
+    # apka product
+] + debug_toolbar_urls()
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
